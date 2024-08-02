@@ -18,12 +18,12 @@
             text-align: center;
             color: #38003c; /* Changed color for the title */
             margin: 20px 0;
-            font-size: 2.5rem; /* Responsive font size */
+            font-size: 40px;
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         .container {
-            max-width: 90%;
+            max-width: 900px;
             margin: auto;
             padding: 20px;
             background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
@@ -36,23 +36,24 @@
             border-bottom: 3px solid #3498db;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            font-size: 1.75rem; /* Responsive font size */
+            font-size: 28px;
             font-weight: 500;
         }
         .form-row {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
         .form-row > div {
             flex: 1;
+            min-width: 150px;
         }
         .form-row label {
             display: block;
             margin-bottom: 5px;
             color: #2c3e50;
-            font-size: 0.875rem; /* Responsive font size */
+            font-size: 14px;
         }
         input, select {
             padding: 10px;
@@ -60,7 +61,7 @@
             border: 1px solid #bdc3c7;
             width: 100%;
             box-sizing: border-box;
-            font-size: 0.875rem; /* Responsive font size */
+            font-size: 14px;
         }
         .manager-select, .position-select {
             height: 38px;
@@ -78,15 +79,13 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            table-layout: fixed; /* Ensure consistent column widths */
         }
         th, td {
             padding: 14px;
             border: 1px solid #e0e0e0;
             text-align: center;
-            font-size: 1rem; /* Responsive font size */
+            font-size: 16px;
             color: #2c3e50;
-            word-wrap: break-word; /* Allow text to wrap */
         }
         th {
             background-color: #3498db;
@@ -102,7 +101,7 @@
             border: none;
             color: #ffffff;
             cursor: pointer;
-            font-size: 0.875rem; /* Responsive font size */
+            font-size: 14px;
             margin: 5px;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
@@ -126,16 +125,16 @@
                 padding: 15px;
             }
             h1 {
-                font-size: 2rem; /* Adjusted font size for smaller screens */
+                font-size: 2rem;
             }
             h2 {
-                font-size: 1.5rem; /* Adjusted font size for smaller screens */
+                font-size: 1.5rem;
             }
             input, select {
-                font-size: 0.75rem; /* Adjusted font size for smaller screens */
+                font-size: 0.75rem;
             }
             button {
-                font-size: 0.75rem; /* Adjusted font size for smaller screens */
+                font-size: 0.75rem;
             }
         }
         
@@ -144,24 +143,40 @@
                 padding: 10px;
             }
             h1 {
-                font-size: 1.5rem; /* Further reduced font size for very small screens */
+                font-size: 1.5rem;
             }
             h2 {
-                font-size: 1.25rem; /* Further reduced font size for very small screens */
+                font-size: 1.25rem;
             }
             input, select {
-                font-size: 0.65rem; /* Further reduced font size for very small screens */
+                font-size: 0.65rem;
             }
             button {
-                font-size: 0.65rem; /* Further reduced font size for very small screens */
-                padding: 10px 15px; /* Adjusted padding for very small screens */
+                font-size: 0.65rem;
+                padding: 10px 15px;
+            }
+            table {
+                font-size: 0.75rem; /* Smaller font size for smaller screens */
+            }
+            .form-row {
+                flex-direction: column;
             }
         }
 
         /* Horizontal scroll for table on small screens */
         .table-container {
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
         }
     </style>
 </head>
