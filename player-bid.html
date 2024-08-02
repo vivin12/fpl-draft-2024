@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL Draft 2024</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('fpl_image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #ecf0f1;
+        }
+        h1 {
+            text-align: center;
+            color: #38003c; /* Changed color for the title */
+            margin: 20px 0;
+            font-size: 40px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 500;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .form-row > div {
+            flex: 1;
+            min-width: 150px;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        input, select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #bdc3c7;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .manager-select, .position-select {
+            height: 38px;
+        }
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        .add-btn {
+            background-color: #3498db;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        .save-btn {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FPL Draft 2024</h1>
+        <div class="form-row">
+            <div>
+                <label for="playerName">Player Name:</label>
+                <input id="playerName" type="text" placeholder="Player Name" required>
+            </div>
+            <div>
+                <label for="position">Position:</label>
+                <select id="position" class="position-select">
+                    <option value="">Select Position</option>
+                    <option value="MID">MID</option>
+                    <option value="DEF">DEF</option>
+                    <option value="FWD">FWD</option>
+                    <option value="GKP">GKP</option>
+                </select>
+            </div>
+            <div>
+                <label for="manager">Manager:</label>
+                <select id="manager" class="manager-select">
+                    <option value="">Select Manager</option>
+                    <option value="AJ">AJ</option>
+                    <option value="AS">AS</option>
+                    <option value="JS">JS</option>
+                    <option value="JM">JM</option>
+                    <option value="KM">KM</option>
+                    <option value="VA">VA</option>
+                </select>
+            </div>
+            <div>
+                <label for="bidValue">Bid Value:</label>
+                <input id="bidValue" type="number" placeholder="Bid Value">
+            </div>
+            <div>
+                <button id="addPlayer" class="add-btn">Add Player</button>
+            </div>
+        </div>
+
+        <table id="playerTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Player Name</th>
+                    <th>Position</th>
+                    <th>Manager</th>
+                    <th>Bid Value</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Player rows will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, set, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7OjmI8TEIxteZRRQQDY-OPfwQCWb3oLE",
+            authDomain: "fpl-draft-2024.firebaseapp.com",
+            projectId: "fpl-draft-2024",
+            storageBucket: "fpl-draft-2024.appspot.com",
+            messagingSenderId: "910002009768",
+            appId: "1:910002009768:web:fe9f9abb8d0ff7ab86349d"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const playerName = document.querySelector("#playerName");
+        const position = document.querySelector("#position");
+        const manager = document.querySelector("#manager");
+        const bidValue = document.querySelector("#bidValue");
+        const addPlayerBtn = document.querySelector("#addPlayer");
+        const playerTableBody = document.querySelector("#playerTable tbody");
+
+        async function getNextPlayerNo() {
+            const dbRef = ref(db, "Players");
+            const snapshot = await get(dbRef);
+            const players = snapshot.val();
+            let nextNo = 1;
+
+            if (players) {
+                const keys = Object.keys(players);
+                nextNo = keys.length + 1;
+            }
+            return nextNo;
+        }
+
+        function createPositionSelect(selectedValue = '') {
+            const options = ['MID', 'DEF', 'FWD', 'GKP'];
+            return `<select class="position-select">
+                <option value="">Select Position</option>
+                ${options.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
+            </select>`;
+        }
+
+        function createManagerSelect(selectedValue = '') {
+            const options = ['AJ', 'AS', 'JS', 'JM', 'KM', 'VA'];
+            return `<select class="manager-select">
+                <option value="">Select Manager</option>
+                ${options.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
+            </select>`;
+        }
+
+        function addPlayerToTable(no, name, position, manager, bidValue) {
+            const row = document.createElement('tr');
+            row.dataset.key = no; // Store Firebase key for deletion
+            row.innerHTML = `
+                <td>${no}</td>
+                <td>${name}</td>
+                <td>${createPositionSelect(position)}</td>
+                <td>${createManagerSelect(manager)}</td>
+                <td><input type="number" value="${bidValue || ''}" class="bid-value-input"></td>
+                <td class="action-btns">
+                    <button class="save-btn">Save</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            `;
+            playerTableBody.appendChild(row);
+
+            // Add event listener for delete button
+            row.querySelector(".delete-btn").addEventListener('click', () => deletePlayer(no));
+
+            // Add event listener for save button
+            row.querySelector(".save-btn").addEventListener('click', () => savePlayer(no));
+
+            // Add event listener for input fields to save on Enter
+            row.querySelector(".bid-value-input").addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    savePlayer(no);
+                }
+            });
+        }
+
+        async function addPlayer() {
+            const name = playerName.value;
+            const pos = position.value;
+            const managerValue = manager.value || ''; // Blank if not provided
+            const bid = bidValue.value || ''; // Blank if not provided
+
+            if (name && pos) {
+                try {
+                    const no = await getNextPlayerNo();
+                    await set(ref(db, "Players/" + no), {
+                        No: no,
+                        PlayerName: name,
+                        Position: pos,
+                        Manager: managerValue,
+                        BidValue: bid
+                    });
+                    addPlayerToTable(no, name, pos, managerValue, bid);
+                    playerName.value = '';
+                    position.value = '';
+                    manager.value = '';
+                    bidValue.value = '';
+                } catch (error) {
+                    alert("Error: " + error.message);
+                }
+            } else {
+                alert("Please fill in Player Name and Position.");
+            }
+        }
+
+        async function deletePlayer(no) {
+            try {
+                await remove(ref(db, "Players/" + no));
+                document.querySelector(`tr[data-key="${no}"]`).remove();
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+
+        async function savePlayer(no) {
+            const row = document.querySelector(`tr[data-key="${no}"]`);
+            const managerValue = row.querySelector(".manager-select").value || '';
+            const bidValue = row.querySelector(".bid-value-input").value || '';
+            const positionValue = row.querySelector(".position-select").value || '';
+
+            try {
+                await update(ref(db, "Players/" + no), {
+                    Manager: managerValue,
+                    BidValue: bidValue,
+                    Position: positionValue
+                });
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+
+        async function loadPlayers() {
+            try {
+                const dbRef = ref(db, "Players");
+                const snapshot = await get(dbRef);
+                const players = snapshot.val();
+
+                if (players) {
+                    Object.keys(players).forEach(key => {
+                        const player = players[key];
+                        addPlayerToTable(player.No, player.PlayerName, player.Position, player.Manager, player.BidValue);
+                    });
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addPlayer();
+            }
+        }
+
+        addPlayerBtn.addEventListener('click', addPlayer);
+        playerName.addEventListener('keypress', handleKeyPress);
+        position.addEventListener('keypress', handleKeyPress);
+
+        // Load players on page load
+        loadPlayers();
+    </script>
+</body>
+</html>
