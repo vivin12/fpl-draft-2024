@@ -184,11 +184,11 @@
         <div class="summary">
             <div>
                 <strong>Squad Value:</strong>
-                <input id="squadValue" type="number" step="0.01" value="0.00">
+                <input id="squadValue" type="number" step="0.01" value="">
             </div>
             <div>
                 <strong>Remaining Transfer Budget:</strong>
-                <input id="remainingBudget" type="number" step="0.01" value="1000.00">
+                <input id="remainingBudget" type="number" step="0.01" value="">
             </div>
         </div>
     </div>
@@ -223,16 +223,20 @@
         const squadValueInput = document.getElementById('squadValue');
         const remainingBudgetInput = document.getElementById('remainingBudget');
 
+        // Add player to table and database
+        addPlayerBtn.addEventListener('click', () => {
+            addPlayer();
+        });
+
         // Add event listener for Enter key to submit form
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && document.activeElement === playerNameInput) {
+            if (event.key === 'Enter' && document.activeElement !== addPlayerBtn) {
                 event.preventDefault(); // Prevent form submission
-                addPlayerBtn.click(); // Trigger the button click
+                addPlayer();
             }
         });
 
-        // Add player to table and database
-        addPlayerBtn.addEventListener('click', () => {
+        function addPlayer() {
             const playerName = playerNameInput.value.trim();
             const position = positionSelect.value;
             const bidValue = parseFloat(bidValueInput.value);
@@ -254,7 +258,7 @@
             } else {
                 alert('Please fill out all fields.');
             }
-        });
+        }
 
         // Load existing players from Firebase
         function loadPlayers() {
@@ -337,10 +341,10 @@
         // Save squad value and remaining budget to Firebase
         function saveSummary() {
             const summaryData = {
-                squadValue: parseFloat(squadValueInput.value),
-                remainingBudget: parseFloat(remainingBudgetInput.value)
+                squadValue: parseFloat(squadValueInput.value) || 0,
+                remainingBudget: parseFloat(remainingBudgetInput.value) || 0
             };
-            const summaryRef = ref(database, 'summary-as');
+            const summaryRef = ref(database, 'summary-aj');
             set(summaryRef, summaryData).catch((error) => {
                 console.error("Error saving summary:", error);
                 alert('Failed to save summary. Please try again.');
