@@ -15,7 +15,7 @@
         }
         .container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 20px auto;
             padding: 20px;
             background: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
             border-radius: 10px;
@@ -25,7 +25,7 @@
             color: #38003c;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 36px;
+            font-size: 2rem; /* Responsive font size */
             font-weight: 700;
         }
         ul {
@@ -43,20 +43,44 @@
             background-color: #3498db; /* Bright blue background */
             padding: 10px 20px;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 1rem; /* Responsive font size */
             font-weight: bold;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
         a:hover {
             background-color: #2980b9; /* Darker blue on hover */
             transform: scale(1.05); /* Slight scale effect on hover */
-            text-decoration: none; /* Remove underline on hover */
         }
         footer {
             text-align: center;
             margin-top: 40px;
-            font-size: 14px;
+            font-size: 0.875rem; /* Responsive font size */
             color: white;
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5rem; /* Smaller font size on small screens */
+            }
+            a {
+                font-size: 0.875rem; /* Smaller font size on small screens */
+                padding: 8px 15px; /* Adjust padding for smaller screens */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.25rem; /* Further reduce font size on very small screens */
+            }
+            a {
+                font-size: 0.75rem; /* Further reduce font size on very small screens */
+                padding: 6px 12px; /* Adjust padding for very small screens */
+            }
         }
     </style>
 </head>

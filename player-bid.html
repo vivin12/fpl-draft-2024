@@ -118,6 +118,45 @@
         .save-btn {
             background-color: #2ecc71;
         }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2rem; /* Adjusted font size for smaller screens */
+            }
+            h2 {
+                font-size: 1.5rem; /* Adjusted font size for smaller screens */
+            }
+            input, select {
+                font-size: 0.75rem; /* Adjusted font size for smaller screens */
+            }
+            button {
+                font-size: 0.75rem; /* Adjusted font size for smaller screens */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1.5rem; /* Further reduced font size for very small screens */
+            }
+            h2 {
+                font-size: 1.25rem; /* Further reduced font size for very small screens */
+            }
+            input, select {
+                font-size: 0.65rem; /* Further reduced font size for very small screens */
+            }
+            button {
+                font-size: 0.65rem; /* Further reduced font size for very small screens */
+                padding: 10px 15px; /* Adjusted padding for very small screens */
+            }
+        }
+
     </style>
 </head>
 <body>
