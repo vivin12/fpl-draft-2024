@@ -215,27 +215,52 @@
                 <input id="bidValue" type="number" placeholder="Bid Value">
             </div>
             <div>
+                <label for="team">Team:</label>
+                <select id="team" class="team-select">
+                    <option value="">Select Team</option>
+                    <option value="ARS">ARS</option>
+                    <option value="AVL">AVL</option>
+                    <option value="BOU">BOU</option>
+                    <option value="BRE">BRE</option>
+                    <option value="BHA">BHA</option>
+                    <option value="CHE">CHE</option>
+                    <option value="CRY">CRY</option>
+                    <option value="EVE">EVE</option>
+                    <option value="FUL">FUL</option>
+                    <option value="IPS">IPS</option>
+                    <option value="LEI">LEI</option>
+                    <option value="LIV">LIV</option>
+                    <option value="MCI">MCI</option>
+                    <option value="MUN">MUN</option>
+                    <option value="NEW">NEW</option>
+                    <option value="NFO">NFO</option>
+                    <option value="SOU">SOU</option>
+                    <option value="TOT">TOT</option>
+                    <option value="WHU">WHU</option>
+                    <option value="WOL">WOL</option>
+                </select>
+            </div>
+            <div>
                 <button id="addPlayer" class="add-btn">Add Player</button>
             </div>
         </div>
 
-        <div class="table-container">
-            <table id="playerTable">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Player Name</th>
-                        <th>Position</th>
-                        <th>Manager</th>
-                        <th>Bid Value</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Player rows will be added here -->
-                </tbody>
-            </table>
-        </div>
+        <table id="playerTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Player Name</th>
+                    <th>Position</th>
+                    <th>Manager</th>
+                    <th>Bid Value</th>
+                    <th>Team</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Player rows will be added here -->
+            </tbody>
+        </table>
     </div>
 
     <script type="module">
@@ -260,6 +285,7 @@
         const position = document.querySelector("#position");
         const manager = document.querySelector("#manager");
         const bidValue = document.querySelector("#bidValue");
+        const team = document.querySelector("#team");
         const addPlayerBtn = document.querySelector("#addPlayer");
         const playerTableBody = document.querySelector("#playerTable tbody");
 
@@ -267,32 +293,34 @@
             const dbRef = ref(db, "Players");
             const snapshot = await get(dbRef);
             const players = snapshot.val();
-            let nextNo = 1;
-
-            if (players) {
-                const keys = Object.keys(players);
-                nextNo = keys.length + 1;
-            }
+            const nextNo = players ? Math.max(...Object.keys(players).map(Number)) + 1 : 1;
             return nextNo;
         }
 
-        function createPositionSelect(selectedValue = '') {
-            const options = ['MID', 'DEF', 'FWD', 'GKP'];
+        function createPositionSelect(selectedValue) {
+            const positions = ["MID", "DEF", "FWD", "GKP"];
             return `<select class="position-select">
-                <option value="">Select Position</option>
-                ${options.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
+                ${positions.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
             </select>`;
         }
 
-        function createManagerSelect(selectedValue = '') {
-            const options = ['AJ', 'AS', 'JS', 'JM', 'KM', 'VA'];
+        function createManagerSelect(selectedValue) {
+            const managers = ["AJ", "AS", "JS", "JM", "KM", "VA"];
             return `<select class="manager-select">
-                <option value="">Select Manager</option>
-                ${options.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
+                ${managers.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
             </select>`;
         }
 
-        function addPlayerToTable(no, name, position, manager, bidValue) {
+        function createTeamSelect(selectedValue) {
+        const teams = ["ARS", "AVL", "BOU", "BRE", "BHA", "CHE", "CRY", "EVE", "FUL", "IPS", "LEI", "LIV", "MCI", "MUN", "NEW", "NFO", "SOU", "TOT", "WHU", "WOL"];
+        return `<select class="team-select">
+            <option value="">Select a Team</option>
+            ${teams.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join('')}
+        </select>`;
+        }
+
+
+        function addPlayerToTable(no, name, position, manager, bidValue, team) {
             const row = document.createElement('tr');
             row.dataset.key = no; // Store Firebase key for deletion
             row.innerHTML = `
@@ -301,6 +329,7 @@
                 <td>${createPositionSelect(position)}</td>
                 <td>${createManagerSelect(manager)}</td>
                 <td><input type="number" value="${bidValue || ''}" class="bid-value-input"></td>
+                <td>${createTeamSelect(team)}</td>
                 <td class="action-btns">
                     <button class="save-btn">Save</button>
                     <button class="delete-btn">Delete</button>
@@ -320,6 +349,8 @@
                     savePlayer(no);
                 }
             });
+
+            row.querySelector(".team-select").addEventListener('change', () => savePlayer(no));
         }
 
         async function addPlayer() {
@@ -327,6 +358,7 @@
             const pos = position.value;
             const managerValue = manager.value || ''; // Blank if not provided
             const bid = bidValue.value || ''; // Blank if not provided
+            const teamValue = team.value || ''; // Blank if not provided
 
             if (name && pos) {
                 try {
@@ -336,13 +368,15 @@
                         PlayerName: name,
                         Position: pos,
                         Manager: managerValue,
-                        BidValue: bid
+                        BidValue: bid,
+                        Team: teamValue
                     });
-                    addPlayerToTable(no, name, pos, managerValue, bid);
+                    addPlayerToTable(no, name, pos, managerValue, bid, teamValue);
                     playerName.value = '';
                     position.value = '';
                     manager.value = '';
                     bidValue.value = '';
+                    team.value = '';
                 } catch (error) {
                     alert("Error: " + error.message);
                 }
@@ -365,12 +399,14 @@
             const managerValue = row.querySelector(".manager-select").value || '';
             const bidValue = row.querySelector(".bid-value-input").value || '';
             const positionValue = row.querySelector(".position-select").value || '';
+            const teamValue = row.querySelector(".team-select").value || '';
 
             try {
                 await update(ref(db, "Players/" + no), {
                     Manager: managerValue,
                     BidValue: bidValue,
-                    Position: positionValue
+                    Position: positionValue,
+                    Team: teamValue
                 });
             } catch (error) {
                 alert("Error: " + error.message);
@@ -386,7 +422,7 @@
                 if (players) {
                     Object.keys(players).forEach(key => {
                         const player = players[key];
-                        addPlayerToTable(player.No, player.PlayerName, player.Position, player.Manager, player.BidValue);
+                        addPlayerToTable(player.No, player.PlayerName, player.Position, player.Manager, player.BidValue, player.Team);
                     });
                 }
             } catch (error) {
