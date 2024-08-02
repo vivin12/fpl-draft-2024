@@ -3,47 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Pages Site</title>
+    <title>FPL Draft 2024</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: url('fpl_image.jpg') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             padding: 0;
+            color: #333;
         }
         .container {
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         h1 {
-            color: #333;
+            color: #38003c;
             text-align: center;
             margin-bottom: 30px;
+            font-size: 36px;
+            font-weight: 700;
         }
         ul {
             list-style-type: none;
             padding: 0;
         }
         li {
-            margin: 10px 0;
+            margin: 15px 0;
+            text-align: center;
         }
         a {
+            display: inline-block;
             text-decoration: none;
-            color: #1e90ff;
+            color: #fff; /* White text color */
+            background-color: #3498db; /* Bright blue background */
+            padding: 10px 20px;
+            border-radius: 5px;
             font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         a:hover {
-            color: #ff6347;
+            background-color: #2980b9; /* Darker blue on hover */
+            transform: scale(1.05); /* Slight scale effect on hover */
+            text-decoration: none; /* Remove underline on hover */
         }
         footer {
             text-align: center;
             margin-top: 40px;
             font-size: 14px;
-            color: #666;
+            color: white;
         }
     </style>
 </head>
@@ -51,7 +64,7 @@
     <div class="container">
         <h1>FPL Draft 2024</h1>
         <ul>
-	        <li><a href="POT-breakdown.html">POT Breakdown</a></li>
+            <li><a href="POT-breakdown.html">POT Breakdown</a></li>
             <li><a href="all-players-list.html">All Players List</a></li>
             <li><a href="POT1.html">POT 1 List</a></li>
             <li><a href="POT2.html">POT 2 List</a></li>
@@ -68,4 +81,3 @@
     </footer>
 </body>
 </html>
-
