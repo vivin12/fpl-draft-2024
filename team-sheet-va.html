@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team - VA</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('fpl_image.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            color: #ecf0f1;
+        }
+        h1 {
+            text-align: center;
+            color: #38003c;
+            margin: 20px 0;
+            font-size: 40px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .form-row > div {
+            flex: 1;
+            min-width: 150px;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        input, select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #bdc3c7;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .action-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        .add-btn {
+            background-color: #3498db;
+        }
+        .save-btn {
+            background-color: #2ecc71; /* Green */
+        }
+        .delete-btn {
+            background-color: #e74c3c; /* Red */
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+        }
+
+        .summary div {
+            flex: 1;
+            text-align: center;
+            color: #333333; /* Darker text color for better contrast */
+        }
+
+        .summary strong {
+            display: block;
+            color: #2c3e50; /* Even darker color for strong labels */
+        }
+
+        .summary input {
+            width: 80%;
+            font-size: 16px;
+            text-align: center;
+            color: #2c3e50; /* Dark text color for input fields */
+            background-color: #ecf0f1; /* Light background for inputs */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Team - VA</h1>
+        <div class="form-row">
+            <div>
+                <label for="playerName">Player Name:</label>
+                <input id="playerName" type="text" placeholder="Player Name" required>
+            </div>
+            <div>
+                <label for="position">Position:</label>
+                <select id="position" class="position-select">
+                    <option value="">Select Position</option>
+                    <option value="MID">MID</option>
+                    <option value="DEF">DEF</option>
+                    <option value="FWD">FWD</option>
+                    <option value="GKP">GKP</option>
+                </select>
+            </div>
+            <div>
+                <label for="bidValue">Bid Value:</label>
+                <input id="bidValue" type="number" placeholder="Bid Value">
+            </div>
+            <div>
+                <button id="addPlayer" class="add-btn">Add Player</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table id="playerTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Player Name</th>
+                        <th>Position</th>
+                        <th>Bid Value</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Player rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="summary">
+            <div>
+                <strong>Squad Value:</strong>
+                <input id="squadValue" type="number" step="0.01" value="0.00">
+            </div>
+            <div>
+                <strong>Remaining Transfer Budget:</strong>
+                <input id="remainingBudget" type="number" step="0.01" value="1000.00">
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBG2cOEc-0MymMYwTdbEXqHigje5nkmBvc",
+            authDomain: "fpl-draft-2024.firebaseapp.com",
+            projectId: "fpl-draft-2024",
+            storageBucket: "fpl-draft-2024.appspot.com",
+            messagingSenderId: "199516683817",
+            appId: "1:199516683817:web:489665aa503b6cc03af983",
+            measurementId: "G-02SMH9KND2",
+            databaseURL: "https://fpl-draft-2024-default-rtdb.firebaseio.com/",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Player form elements
+        const playerNameInput = document.getElementById('playerName');
+        const positionSelect = document.getElementById('position');
+        const bidValueInput = document.getElementById('bidValue');
+        const addPlayerBtn = document.getElementById('addPlayer');
+        const playerTable = document.getElementById('playerTable').getElementsByTagName('tbody')[0];
+
+        // Squad Value and Remaining Transfer Budget
+        const squadValueInput = document.getElementById('squadValue');
+        const remainingBudgetInput = document.getElementById('remainingBudget');
+
+        // Add event listener for Enter key to submit form
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && document.activeElement === playerNameInput) {
+                event.preventDefault(); // Prevent form submission
+                addPlayerBtn.click(); // Trigger the button click
+            }
+        });
+
+        // Add player to table and database
+        addPlayerBtn.addEventListener('click', () => {
+            const playerName = playerNameInput.value.trim();
+            const position = positionSelect.value;
+            const bidValue = parseFloat(bidValueInput.value);
+
+            if (playerName && position && !isNaN(bidValue)) {
+                const playerData = {
+                    playerName,
+                    position,
+                    bidValue
+                };
+                const newPlayerRef = ref(database, 'team-va/' + playerName);
+                set(newPlayerRef, playerData).then(() => {
+                    addPlayerToTable(playerData);
+                    resetForm();
+                }).catch((error) => {
+                    console.error("Error adding player:", error);
+                    alert('Failed to add player. Please try again.');
+                });
+            } else {
+                alert('Please fill out all fields.');
+            }
+        });
+
+        // Load existing players from Firebase
+        function loadPlayers() {
+            const playersRef = ref(database, 'team-va');
+            get(playersRef).then(snapshot => {
+                if (snapshot.exists()) {
+                    const players = snapshot.val();
+                    Object.values(players).forEach(player => {
+                        addPlayerToTable(player);
+                    });
+                }
+            });
+        }
+
+        function addPlayerToTable(playerData) {
+            const row = playerTable.insertRow();
+            row.insertCell(0).textContent = playerTable.rows.length;
+            const nameCell = row.insertCell(1);
+            const positionCell = row.insertCell(2);
+            const bidCell = row.insertCell(3);
+            const actionCell = row.insertCell(4);
+
+            nameCell.innerHTML = `<input type="text" value="${playerData.playerName}">`;
+            positionCell.innerHTML = `<input type="text" value="${playerData.position}">`;
+            bidCell.innerHTML = `<input type="number" value="${playerData.bidValue}">`;
+
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'Save';
+            saveBtn.className = 'save-btn';
+            saveBtn.addEventListener('click', () => saveRow(row, playerData.playerName));
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.addEventListener('click', () => deleteRow(row, playerData.playerName));
+
+            actionCell.append(saveBtn, deleteBtn);
+        }
+
+        function saveRow(row, playerName) {
+            const inputs = row.querySelectorAll('input');
+            const updatedData = {
+                playerName: inputs[0].value,
+                position: inputs[1].value,
+                bidValue: parseFloat(inputs[2].value)
+            };
+            const playerRef = ref(database, 'team-va/' + playerName);
+            set(playerRef, updatedData).then(() => {
+                inputs.forEach(input => input.disabled = true);
+            }).catch((error) => {
+                console.error("Error saving player:", error);
+                alert('Failed to save player. Please try again.');
+            });
+        }
+
+        function deleteRow(row, playerName) {
+            const playerRef = ref(database, 'team-va/' + playerName);
+            set(playerRef, null).then(() => {
+                row.remove();
+                updateRowNumbers();
+            }).catch((error) => {
+                console.error("Error deleting player:", error);
+                alert('Failed to delete player. Please try again.');
+            });
+        }
+
+        function updateRowNumbers() {
+            const rows = playerTable.querySelectorAll('tr');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+        }
+
+        function resetForm() {
+            playerNameInput.value = '';
+            positionSelect.value = '';
+            bidValueInput.value = '';
+        }
+
+        // Save squad value and remaining budget to Firebase
+        function saveSummary() {
+            const summaryData = {
+                squadValue: parseFloat(squadValueInput.value),
+                remainingBudget: parseFloat(remainingBudgetInput.value)
+            };
+            const summaryRef = ref(database, 'summary');
+            set(summaryRef, summaryData).catch((error) => {
+                console.error("Error saving summary:", error);
+                alert('Failed to save summary. Please try again.');
+            });
+        }
+
+        squadValueInput.addEventListener('change', saveSummary);
+        remainingBudgetInput.addEventListener('change', saveSummary);
+
+        loadPlayers();
+    </script>
+</body>
+</html>
